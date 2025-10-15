@@ -15,6 +15,7 @@ export const getStudents = async (req, res) => {
     page = 1,
     perPage = 10,
     gender,
+    search,
     minAvgMark,
     sortBy = '_id',
     sortOrder = 'asc',
@@ -27,6 +28,11 @@ export const getStudents = async (req, res) => {
   // const studentsQuery = Student.find();
   // Додаємо критерій пошуку тільки студентів поточного користувача
   const studentsQuery = Student.find({ userId: req.user._id });
+
+    //Apply text search if provided (uses MongoDB text index)
+    if (search) {
+      studentsQuery.where({ $text: { $search: search } });
+    }
 
   // Apply filters if provided
   if (gender) {
